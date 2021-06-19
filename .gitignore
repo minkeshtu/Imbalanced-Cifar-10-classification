@@ -3,4 +3,6 @@
 **/__pycache__
 results
 data
-
+tests
+pose_data
+pose_loader.py

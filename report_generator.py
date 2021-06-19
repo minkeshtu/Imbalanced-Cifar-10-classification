@@ -1,9 +1,7 @@
 import os
 import pandas as pd
 import seaborn as sns
-import yaml
 import numpy as np
-import random
 from collections import OrderedDict
 from docx import Document
 from docx.shared import Inches

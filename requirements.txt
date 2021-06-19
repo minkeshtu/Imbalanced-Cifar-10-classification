@@ -1,0 +1,14 @@
+# python 3.x
+numpy
+matplotlib
+pandas
+seaborn
+Pillow
+torch
+torchvision
+scikit-learn
+tensorboard
+torch-summary == 1.4.5
+python-docx == 0.8.10
+Cython == 0.29.23
+pyyaml == 5.4.1

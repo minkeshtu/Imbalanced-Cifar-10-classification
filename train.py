@@ -1,8 +1,7 @@
 import argparse
 import logging
-import math
 import os
-import random
+
 import shutil
 import datetime
 import time
@@ -21,6 +20,7 @@ from utils import AverageMeter, set_seed, save_checkpoint, to_numpy, get_logger,
 from report_generator import generate_experiment_report
 
 logger = logging.getLogger(__name__)
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 
 def create_end_to_end_model(args):
@@ -237,7 +237,7 @@ def do_classification_training(args, writer, trainLoader, valLoader):
 def do_testing_of_trained_model(args, testLoader):
     # Create model and load weights
     _, model = create_separate_models(args)
-    if args.is_end_to_end_training or args.is_classificaiton_training:
+    if args.is_end_to_end_training or args.is_classification_training:
         weight_file_path = os.path.join(args.root_dir, f'{args.exp_name}/trained_model_files/model_best.pth.tar')
     elif args.is_separate_training:
         weight_file_path = os.path.join(args.root_dir, f'{args.exp_name}/trained_model_files/classification_model/model_best.pth.tar')
@@ -266,12 +266,12 @@ def main():
     parser = argparse.ArgumentParser(description='Models Training arguments on Cifar10 strictly imbalanced Dataset')
     parser.add_argument('--is_end_to_end_training', action='store_true', help='Encoder, Decoder, Classifier all will be trained together in a shared loss')
     parser.add_argument('--is_separate_training', action='store_true', help='First AE will be trained then classifier will be trained after freezing the encoder part')
-    parser.add_argument('--is_classificaiton_training', action='store_true', help='To train Classification model (Encoder + Classifier)')
+    parser.add_argument('--is_classification_training', action='store_true', help='To train Classification model (Encoder + Classifier)')
     parser.add_argument('--is_save_deployable_model', type=bool, default=True, help='To save deployebale model after removing the decoder')
     parser.add_argument('--exp_name', default=None, type=str,
                         help='Training parameters and results will be saved in `results` dir with `dir structure made using hyperparameters`.\
                         Enter Exp name where you want to save your results as a parent dir of `dir structure made using hyperparameters`')
-    parser.add_argument('--arch', default='mobilenetv2_based', type=str,
+    parser.add_argument('--arch', default='unet_based', type=str,
                         choices=['mobilenetv2_based', 'unet_based'],
                         help='Architecture name')
     parser.add_argument('--width_scale_factor', default=2, choices=[0.5, 1, 2, 3], help='width scaling factor in unet_based network, default depth -> [32, 64, 128,256]')
@@ -284,13 +284,13 @@ def main():
                         choices=['weightedOverSampling', None], help='Data Weighted OverSampling to tackle imbalance dataset')
     parser.add_argument('--optimizer', default='sgd', type=str, choices=['adam', 'sgd'])
     parser.add_argument('--weight_decay', default=5e-4, type=float)
-    parser.add_argument('--loss_weightage', default=[1, 1], type=list,
+    parser.add_argument('--loss_weightage', default=[1, 1], nargs='+', type=int,
                         help='Loss wightage-> `list` [ae_loss_weightage, classifier_loss_weightage]')
-    parser.add_argument('--classes_to_limit', default=[2, 4, 9], choices=[i for i in range(10)], type=list)
+    parser.add_argument('--classes_to_limit', default=[2, 4, 9], nargs='+', type=int, choices=[i for i in range(10)])
     parser.add_argument('--data_limit_in_classes', default=2450, type=int)
     parser.add_argument('--num_classes', type=int, default=10)
     parser.add_argument('--verbose', default=True, type=bool)
-    parser.add_argument('--num_epochs', type=int, default=50)
+    parser.add_argument('--num_epochs', type=int, default=2)
     parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--learning_rate', default=0.1, type=int) # sgd->0.1 (but, with Weighted focal please use 0.01), adam->0.001
     parser.add_argument('--seed', default=0, type=int, help="random seed")
@@ -321,7 +321,7 @@ def main():
         set_seed(args)
 
     ########## Either End-to-end or Separate training or Classification model training is True
-    if args.is_end_to_end_training or args.is_separate_training or args.is_classificaiton_training:
+    if args.is_end_to_end_training or args.is_separate_training or args.is_classification_training:
         print('\n*** Hyperparameters') # Hyperparameter logging
         print(f'\nNum of Epoches: {args.num_epochs}\nBatch Size: {args.batch_size}\nLearning rate: {args.learning_rate}')
         
@@ -347,7 +347,7 @@ def main():
             generate_experiment_report_in_docx(args)
 
         ########## Classification model Training
-        elif args.is_classificaiton_training:
+        elif args.is_classification_training:
             do_classification_training(args, writer, trainLoader, valLoader)
             do_testing_of_trained_model(args, testLoader)
 

@@ -9,7 +9,7 @@ import os
 __all__ = ['to_numpy','save_checkpoint', 'AverageMeter', 'set_seed', 'get_logger', 'classBalance_loss', 'get_non_trainable_params', 'get_trainable_params']
 
 def to_numpy(tensor):
-    '''To convert the torch tensor into numpy
+    '''To convert the torch tensor into numpy array
     '''
     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
