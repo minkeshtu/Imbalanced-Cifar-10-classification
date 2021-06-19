@@ -4,7 +4,7 @@ RUN apt-get update \
     && apt-get install -y python3-pip
 
 # For development
- COPY requirements.txt home/
+COPY requirements.txt home/
 
 # For Testing and production
 #COPY . /home
