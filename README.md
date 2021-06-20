@@ -21,7 +21,7 @@ Cluster visualization for Feature maps of 1000 images (from test data), and Macr
       Wn,c = 1/(no of samples in class c) 	where Wn,c is weight for class c
       ```
 2. Class balanced loss:
-    - It's a method (described in the paper: Class Balanced loss) to give class weightage in classification loss. This technique overcomes both problems of data oversampling and weighted loss using inverse of class sample frequency. Oversampling is prone to overfit whereas weighted loss does not take hard samples into account. In that paper, they designed a re-weighting scheme that uses the effective number of samples for each class to re-balance the loss, thereby yielding a class-balanced loss . The effective number of samples is defined as the volume of samples and can be calculated by a simple formula.
+    - It's a method (described in the paper: [Class Balanced loss](https://openaccess.thecvf.com/content_CVPR_2019/papers/Cui_Class-Balanced_Loss_Based_on_Effective_Number_of_Samples_CVPR_2019_paper.pdf)) to give class weightage in classification loss. This technique overcomes both problems of data oversampling and weighted loss using inverse of class sample frequency. Oversampling is prone to overfit whereas weighted loss does not take hard samples into account. In that paper, they designed a re-weighting scheme that uses the effective number of samples for each class to re-balance the loss, thereby yielding a class-balanced loss . The effective number of samples is defined as the volume of samples and can be calculated by a simple formula.
       ```
       Effective number of samples = a (1−β^n)/(1−β), 
       where n is number of samples, β ∈ [0, 1) is a hyperparameter
@@ -42,6 +42,7 @@ Implemented Feature extractor as an encoder to extract features more precisely. 
 | 2 | [MobilenetV2 based](architectures/Mobilenetv2_based.py#L25) | [TransposeConv based](architectures/Mobilenetv2_based.py#L35) | [1x1 Conv based](architectures/Mobilenetv2_based.py#L59)
 
 ## Dataset
+[Cifar-10 dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
 - Training:	41650 -> 2450 samples  for ('truck', 'bird', 'deer') classes and 4900 samples for other classes
     - Although you can experiment with different imbalanced combination by just using the command line parameters
 - Validation:	1,000 -> 100 samples in each class
@@ -64,7 +65,7 @@ Implemented Feature extractor as an encoder to extract features more precisely. 
 
 #### Clusters visualization of feature maps (Encoder output)
 
-| Labels | No Class Balancing (1) | Data Oversampling (2) | Class Balancing-Focal (3) | Class Balancing - Softmax (4) | Clas Balancing - Sigmoid (5) |
+| Labels | No Class Balancing (1) | Data Oversampling (2) | Class Balanced loss - Focal (3) | Class Balanced loss - Softmax (4) | Clas Balanced loss - Sigmoid (5) |
 | :--: | :--: | :--: | :--: | :--: | :--: |
 | <img src="/results_images/class_labels.png" /> | <img src="/results_images/feature_clusters__no-class-balancing.png" /> | <img src="/results_images/feature_clusters__data-oversampling.png" /> | <img src="/results_images/feature_clusters__focal-class-balanced-loss.png" /> | <img src="/results_images/feature_clusters__softmax-class-balancing-loss.png" /> | <img src="/results_images/feature_clusters__sigmoid-class-balancing-loss.png" /> |
 
